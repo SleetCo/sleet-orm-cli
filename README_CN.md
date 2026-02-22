@@ -22,13 +22,13 @@ go build -o sleet .
 
 将生成的二进制加入 `PATH`，或直接运行 `./sleet`。
 
-### Windows（构建脚本）
+### Windows
 
-```batch
-build_dev.bat
+**npm（推荐）** — 全局安装：
+
+```bash
+npm install -g sleet-orm-cli
 ```
-
-脚本会编译 `sleet.exe` 并复制到 `C:\Developer\bin`（可在脚本内修改目标路径）。
 
 ## 使用说明
 

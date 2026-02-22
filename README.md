@@ -22,13 +22,13 @@ go build -o sleet .
 
 Add the binary to your `PATH`, or run `./sleet` directly.
 
-### Windows (build script)
+### Windows
 
-```batch
-build_dev.bat
+**npm (recommended)** — global install:
+
+```bash
+npm install -g sleet-orm-cli
 ```
-
-This builds `sleet.exe` and copies it to `C:\Developer\bin` (configurable in the script).
 
 ## Usage
 
