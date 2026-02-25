@@ -30,6 +30,8 @@ type ColumnDef struct {
 	Default       *string // nil means no default
 	DefaultNow    bool
 	References    *string // "tableName.colName" or nil
+	OnUpdate      *string // SQL string
+	SoftDelete    bool    // mark softDelete column
 	Comment       string  // column description from .comment("..."), empty if not set
 }
 
@@ -285,6 +287,39 @@ func buildColTable(L *lua.LState, col *ColumnDef) *lua.LTable {
 		L.Push(t)
 		return 1
 	}))
+
+	// .onUpdate(val) — stores the onUpdate value for automatic field updates
+	L.SetField(t, "onUpdate", L.NewFunction(func(L *lua.LState) int {
+		val := L.Get(1)
+		var s string
+		switch v := val.(type) {
+		case lua.LBool:
+			if bool(v) {
+				s = "1"
+			} else {
+				s = "0"
+			}
+		case lua.LNumber:
+			s = lua.LVAsString(v)
+		case lua.LString:
+			s = string(v)
+		case *lua.LTable:
+			// Handle sl.sql() objects
+			if frag := L.GetField(val, "_fragment"); frag != lua.LNil {
+				s = lua.LVAsString(frag)
+			} else {
+				s = val.String()
+			}
+		default:
+			s = val.String()
+		}
+		col.OnUpdate = &s
+		L.Push(t)
+		return 1
+	}))
+
+	// .softDelete() — marks this column as a soft delete timestamp field
+	chain("softDelete", func() { col.SoftDelete = true })
 
 	// .comment(text) — stores the description string for type generation and SQL
 	L.SetField(t, "comment", L.NewFunction(func(L *lua.LState) int {
